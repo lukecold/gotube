@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	. "strings"
+	"fmt"
+)
 
 type PatternNotFoundError struct {
 	pattern string
@@ -14,4 +17,12 @@ type UnmatchedBracketsError struct{}
 
 func (UnmatchedBracketsError) Error() string {
 	return fmt.Sprintf("Error: unmatched brackets")
+}
+
+type MissingFieldsError struct {
+	fields []string
+}
+
+func (e MissingFieldsError) Error() string {
+	return fmt.Sprintf("Error: detected missing field(s): %v", Join(e.fields, ", "))
 }

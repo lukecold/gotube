@@ -2,9 +2,11 @@ package main
 
 import (
 	"bytes"
+	. "strings"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 )
 
 /*
@@ -14,13 +16,6 @@ You need to log in to view age-restricted videos
 type Client struct {
 	userName string
 	passWord string
-}
-
-/*
-YouTube video
-*/
-type Video struct {
-	title string
 }
 
 /*
@@ -76,10 +71,43 @@ func (*Client) GetJson(httpData []byte) (map[string]interface{}, error) {
 /*
 Get video from json data
 */
-func (*Client) GetVideo(jsonData map[string]interface{}) (video Video, err error) {
+func (*Client) GetVideoList(jsonData map[string]interface{}) (videoList VideoList, err error) {
 	args := jsonData["args"].(map[string]interface{})
-	video.title = args["title"].(string)
-	
-
+	videoList.title = args["title"].(string)
+	encodedStreamMap := args["url_encoded_fmt_stream_map"].(string)
+	videoListStr := Split(encodedStreamMap, ",")
+	for _, videoStr := range videoListStr {
+		videoStr, err = url.QueryUnescape(videoStr)
+		if err != nil {
+			return
+		}
+		videoParams := Split(videoStr, "&")
+		var video Video
+		for _, param := range videoParams {
+			switch {
+			case HasPrefix(param, "quality"):
+				video.quality = param[8:]
+			case HasPrefix(param, "type"):
+				video.videoType = Split(param, ";")[0][5:]
+			case HasPrefix(param, "url"):
+				video.url = param[4:]
+			}
+		}
+		var missingFields []string
+		if video.quality == "" {
+			missingFields = append(missingFields, "quality")
+		}
+		if video.videoType == "" {
+			missingFields = append(missingFields, "video type")
+		}
+		if video.url == "" {
+			missingFields = append(missingFields, "url")
+		}
+		if missingFields != nil {
+			err = MissingFieldsError{fields:missingFields}
+			return
+		}
+		videoList.Append(video)
+	}
 	return
 }

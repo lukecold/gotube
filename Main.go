@@ -22,11 +22,20 @@ func main() {
 		return
 	}
 
-	video, err := cl.GetVideo(json)
+	videoList, err := cl.GetVideoList(json)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
-	file, err := os.Create("output.txt")
+	file, err := os.Create("output.test")
 	if err != nil {
 		log.Fatal(err)
 	}
-	file.Write(video.title)
+	file.WriteString(videoList.title + "\n")
+	for _, video := range videoList.videos {
+		file.WriteString(video.url + "\n")
+		file.WriteString(video.quality + "\n")
+		file.WriteString(video.videoType + "\n")
+	}
 }
