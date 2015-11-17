@@ -1,47 +1,65 @@
 package main
 
 import (
-	// 	"fmt"
+	"flag"
 	"log"
-	// 	"os"
+	"fmt"
 )
 
 func main() {
-	var url = "https://www.youtube.com/watch?v=HK6vQUDx0as"
-	var cl = Client{videoRepository: "videos"}
-	vl, err := cl.GetVideoListFromUrl(url)
+	isDownload := flag.Bool("d", false, "use this flag to download video")
+	isRetList := flag.Bool("l", false, "use this flag to retrieve video list")
+	url := flag.String("url", "", "video url")
+	id := flag.String("id", "", "video id")
+	rep := flag.String("-videorepository", "", "(optional) repository to store videos (please use relative path)")
+	flag.StringVar(rep, "rep", "", "(optional) repository to store videos (please use relative path)")
+	quality := flag.String("-quality", "", "(optional) video quality. e.g. medium")
+	flag.StringVar(quality, "q", "", "(optional) video quality. e.g. medium")
+	extension := flag.String("-extension", "", "(optional) video extension. e.g. video/mp4, video/flv, video/webm")
+	flag.StringVar(extension, "ext", "", "(optional) video extension. e.g. mp4, flv")
+	isHelp := flag.Bool("h", false, "help")
+
+	flag.Parse()
+	
+	if *isHelp {
+		fmt.Println("Usage:")
+		flag.PrintDefaults()
+		return
+	}
+	invalidCommand := false
+	if *isDownload && *isRetList {
+		fmt.Println("You can only either download or retrieve video list.")
+		invalidCommand = true
+	} else if !*isDownload && !*isRetList {
+		fmt.Println("Please choose if you want to download or retrieve video list.")
+		invalidCommand = true
+	}
+	if *url == "" && *id == "" {
+		fmt.Println("Please specify either url and id.")
+		invalidCommand = true
+	} else if *url != "" && *id != "" {
+		fmt.Println("Please don't specify both url and id.")
+		invalidCommand = true
+	}
+	if invalidCommand {
+		fmt.Println("Usage:")
+		flag.PrintDefaults()
+		return
+	}
+
+	//var url = "https://www.youtube.com/watch?v=6LZM3_wp2ps"
+	cl := Client{videoRepository: *rep}
+	
+	vl, err := cl.GetVideoListFromUrl(*url)
 	if err != nil {
 		log.Fatal(err)
 	}
-	vl.Download(cl, "", "")
-	//fmt.Scan(&url)
-	// var cl Client
-	// body, err := cl.RequestUrl(url)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	return
-	// }
-
-	// json, err := cl.GetJson(body)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	return
-	// }
-
-	// videoList, err := cl.GetVideoList(json)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	return
-	// }
-
-	// file, err := os.Create("output.test")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// file.WriteString(videoList.title + "\n")
-	// for _, video := range videoList.videos {
-	// 	file.WriteString(video.url + "\n")
-	// 	file.WriteString(video.quality + "\n")
-	// 	file.WriteString(video.videoType + "\n")
-	// }
+	if *isDownload {
+		err = vl.Download(cl, *quality, *extension)
+		if err != nil {
+			log.Fatal(err)
+		}	
+	} else if *isRetList {
+		fmt.Println(vl)
+	}
 }

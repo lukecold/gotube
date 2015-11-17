@@ -5,11 +5,7 @@ import (
 	. "strings"
 )
 
-type PatternNotFoundError struct {
-	_pattern string
-}
-
-type UnmatchedBracketsError struct{}
+type AgeRestrictedError struct {}
 
 type MissingFieldsError struct {
 	_fields []string
@@ -20,12 +16,14 @@ type NoMatchingVideoError struct {
 	_extension string
 }
 
-func (e PatternNotFoundError) Error() string {
-	return fmt.Sprintf("Error: pattern \"%v\" not found", e._pattern)
+type PatternNotFoundError struct {
+	_pattern string
 }
 
-func (UnmatchedBracketsError) Error() string {
-	return fmt.Sprintf("Error: unmatched brackets")
+type UnmatchedBracketsError struct{}
+
+func (AgeRestrictedError) Error() string {
+	return fmt.Sprintf("Error: this page is age-restricted")
 }
 
 func (e MissingFieldsError) Error() string {
@@ -41,4 +39,12 @@ func (e NoMatchingVideoError) Error() string {
 		errorMessage += " extension=" + e._extension
 	}
 	return fmt.Sprintf(errorMessage)
+}
+
+func (e PatternNotFoundError) Error() string {
+	return fmt.Sprintf("Error: pattern \"%v\" not found", e._pattern)
+}
+
+func (UnmatchedBracketsError) Error() string {
+	return fmt.Sprintf("Error: unmatched brackets")
 }

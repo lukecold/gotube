@@ -14,12 +14,8 @@ YouTube client
 You need to log in to view age-restricted videos
 */
 type Client struct {
-	userName        string
-	passWord        string
 	videoRepository string
 }
-
-//TODO: Find a way to log in
 
 /*
 Get a video list from given id
@@ -54,7 +50,7 @@ func (cl *Client) GetVideoListFromUrl(url string) (vl VideoList, err error) {
 /*
 Request http code from url
 */
-func (*Client) GetHttpFromUrl(url string) ([]byte, error) {
+func (cl *Client) GetHttpFromUrl(url string) ([]byte, error) {
 	resp, err := http.Get(url)
 	if err != nil {
 		return nil, err
@@ -71,6 +67,10 @@ func (*Client) GetHttpFromUrl(url string) ([]byte, error) {
 Get json data
 */
 func (*Client) GetJsonFromHttp(httpData []byte) (map[string]interface{}, error) {
+	//Find out if this page is age-restricted
+	if bytes.Index(httpData, []byte("og:restrictions:age")) != -1 {
+		return nil, AgeRestrictedError{}
+	}
 	//Find begining of json data
 	var jsonBeg = "ytplayer.config = {"
 	beg := bytes.Index(httpData, []byte(jsonBeg))

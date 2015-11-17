@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"os"
+	"strconv"
 	. "strings"
 )
 
@@ -99,4 +101,17 @@ func (vl *VideoList) Download(cl Client, quality, extension string) (err error) 
 	video := vl.videos[0]
 	err = video.Download(cl)
 	return err
+}
+
+func (vl VideoList) String() string {
+	var videoListStr string
+	videoListStr += fmt.Sprintf("video title: " + vl.title + "\n")
+	videoListStr += fmt.Sprintf("Index\tquality\textension\n")
+	for idx, video := range vl.videos {
+		videoListStr += fmt.Sprintf(" %v\t%v\t%v\n", 
+			strconv.Itoa(idx),
+			video.quality,
+			video.extension)
+	}
+	return videoListStr
 }
