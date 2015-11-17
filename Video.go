@@ -4,13 +4,13 @@ package main
 YouTube video
 */
 type Video struct {
-	url string
-	quality string
-	videoType string
+	url       string
+	quality   string
+	extension string
 }
 
 type VideoList struct {
-	title string
+	title  string
 	videos []Video
 }
 

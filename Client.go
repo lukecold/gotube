@@ -2,11 +2,12 @@ package main
 
 import (
 	"bytes"
-	. "strings"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
+	. "strings"
 )
 
 /*
@@ -16,6 +17,71 @@ You need to log in to view age-restricted videos
 type Client struct {
 	userName string
 	passWord string
+}
+
+/*
+Download a single video from given url
+*/
+func (cl *Client) DownloadVideoFromUrl(url, quality, extension string) (err error) {
+	//Get webpage content from url
+	body, err := cl.RequestUrl(url)
+	if err != nil {
+		return
+	}
+	//Extract json data from webpage content
+	jsonData, err := cl.GetJson(body)
+	if err != nil {
+		return
+	}
+	//Fetch video list according to json data
+	videoList, err := cl.GetVideoList(jsonData)
+	if err != nil {
+		return
+	}
+
+	var matchingVideos []Video
+	if quality != "" {
+		for _, video := range videoList.videos {
+			if video.quality == quality {
+				matchingVideos = append(matchingVideos, video)
+			}
+		}
+		videoList.videos = matchingVideos
+	}
+	matchingVideos = nil
+	if extension != "" {
+		for _, video := range videoList.videos {
+			if video.extension == extension {
+				matchingVideos = append(matchingVideos, video)
+			}
+		}
+		videoList.videos = matchingVideos
+	}
+	if len(videoList.videos) == 0 {
+		err = NoMatchingVideoError{_quality: quality, _extension: extension}
+		return
+	}
+
+	video := videoList.videos[0] //No matter how many left, pick the first one
+	//Get video from url
+	body, err = cl.RequestUrl(video.url)
+	if err != nil {
+		return
+	}
+	filename := videoList.title + video.extension
+	filename = Map(
+		func(r rune) rune {
+			if r == '/' {
+				r = '.'
+			}
+			return r
+		}, filename)
+	file, err := os.Create(filename)
+	if err != nil {
+		return
+	}
+	file.Write(body)
+	return nil
 }
 
 /*
@@ -42,7 +108,7 @@ func (*Client) GetJson(httpData []byte) (map[string]interface{}, error) {
 	var jsonBeg = "ytplayer.config = {"
 	beg := bytes.Index(httpData, []byte(jsonBeg))
 	if beg == -1 { //pattern not found
-		return nil, PatternNotFoundError{pattern: jsonBeg}
+		return nil, PatternNotFoundError{_pattern: jsonBeg}
 	}
 	beg += len(jsonBeg) //len(jsonBeg) returns the number of bytes in jsonBeg
 
@@ -88,7 +154,7 @@ func (*Client) GetVideoList(jsonData map[string]interface{}) (videoList VideoLis
 			case HasPrefix(param, "quality"):
 				video.quality = param[8:]
 			case HasPrefix(param, "type"):
-				video.videoType = Split(param, ";")[0][5:]
+				video.extension = Split(param, ";")[0][5:]
 			case HasPrefix(param, "url"):
 				video.url = param[4:]
 			}
@@ -97,14 +163,14 @@ func (*Client) GetVideoList(jsonData map[string]interface{}) (videoList VideoLis
 		if video.quality == "" {
 			missingFields = append(missingFields, "quality")
 		}
-		if video.videoType == "" {
+		if video.extension == "" {
 			missingFields = append(missingFields, "video type")
 		}
 		if video.url == "" {
 			missingFields = append(missingFields, "url")
 		}
 		if missingFields != nil {
-			err = MissingFieldsError{fields:missingFields}
+			err = MissingFieldsError{_fields: missingFields}
 			return
 		}
 		videoList.Append(video)
