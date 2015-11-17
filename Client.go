@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"os"
 	. "strings"
 )
 
@@ -20,74 +19,31 @@ type Client struct {
 }
 
 /*
-Download a single video from given url
+Get a video list from given url
 */
-func (cl *Client) DownloadVideoFromUrl(url, quality, extension string) (err error) {
+func (cl *Client) GetVideoListFromUrl(url string) (vl VideoList, err error) {
 	//Get webpage content from url
-	body, err := cl.RequestUrl(url)
+	body, err := cl.GetHttpFromUrl(url)
 	if err != nil {
 		return
 	}
 	//Extract json data from webpage content
-	jsonData, err := cl.GetJson(body)
+	jsonData, err := cl.GetJsonFromHttp(body)
 	if err != nil {
 		return
 	}
 	//Fetch video list according to json data
-	videoList, err := cl.GetVideoList(jsonData)
+	vl, err = cl.GetVideoListFromJson(jsonData)
 	if err != nil {
 		return
 	}
-
-	var matchingVideos []Video
-	if quality != "" {
-		for _, video := range videoList.videos {
-			if video.quality == quality {
-				matchingVideos = append(matchingVideos, video)
-			}
-		}
-		videoList.videos = matchingVideos
-	}
-	matchingVideos = nil
-	if extension != "" {
-		for _, video := range videoList.videos {
-			if video.extension == extension {
-				matchingVideos = append(matchingVideos, video)
-			}
-		}
-		videoList.videos = matchingVideos
-	}
-	if len(videoList.videos) == 0 {
-		err = NoMatchingVideoError{_quality: quality, _extension: extension}
-		return
-	}
-
-	video := videoList.videos[0] //No matter how many left, pick the first one
-	//Get video from url
-	body, err = cl.RequestUrl(video.url)
-	if err != nil {
-		return
-	}
-	filename := videoList.title + video.extension
-	filename = Map(
-		func(r rune) rune {
-			if r == '/' {
-				r = '.'
-			}
-			return r
-		}, filename)
-	file, err := os.Create(filename)
-	if err != nil {
-		return
-	}
-	file.Write(body)
-	return nil
+	return 
 }
 
 /*
 Request http code from url
 */
-func (*Client) RequestUrl(url string) ([]byte, error) {
+func (*Client) GetHttpFromUrl(url string) ([]byte, error) {
 	resp, err := http.Get(url)
 	if err != nil {
 		return nil, err
@@ -103,7 +59,7 @@ func (*Client) RequestUrl(url string) ([]byte, error) {
 /*
 Get json data
 */
-func (*Client) GetJson(httpData []byte) (map[string]interface{}, error) {
+func (*Client) GetJsonFromHttp(httpData []byte) (map[string]interface{}, error) {
 	//Find begining of json data
 	var jsonBeg = "ytplayer.config = {"
 	beg := bytes.Index(httpData, []byte(jsonBeg))
@@ -137,9 +93,9 @@ func (*Client) GetJson(httpData []byte) (map[string]interface{}, error) {
 /*
 Get video from json data
 */
-func (*Client) GetVideoList(jsonData map[string]interface{}) (videoList VideoList, err error) {
+func (*Client) GetVideoListFromJson(jsonData map[string]interface{}) (vl VideoList, err error) {
 	args := jsonData["args"].(map[string]interface{})
-	videoList.title = args["title"].(string)
+	vl.title = args["title"].(string)
 	encodedStreamMap := args["url_encoded_fmt_stream_map"].(string)
 	videoListStr := Split(encodedStreamMap, ",")
 	for _, videoStr := range videoListStr {
@@ -159,21 +115,12 @@ func (*Client) GetVideoList(jsonData map[string]interface{}) (videoList VideoLis
 				video.url = param[4:]
 			}
 		}
-		var missingFields []string
-		if video.quality == "" {
-			missingFields = append(missingFields, "quality")
-		}
-		if video.extension == "" {
-			missingFields = append(missingFields, "video type")
-		}
-		if video.url == "" {
-			missingFields = append(missingFields, "url")
-		}
+		missingFields := video.FindMissingFields()
 		if missingFields != nil {
 			err = MissingFieldsError{_fields: missingFields}
 			return
 		}
-		videoList.Append(video)
+		vl.Append(video)
 	}
 	return
 }

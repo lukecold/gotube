@@ -9,10 +9,11 @@ package main
 func main() {
 	var url = "https://www.youtube.com/watch?v=HK6vQUDx0as"
 	var cl Client
-	err := cl.DownloadVideoFromUrl(url, "", "")
+	vl, err := cl.GetVideoListFromUrl(url)
 	if err != nil {
 		log.Fatal(err)
 	}
+	vl.Download(cl, "", "")
 	//fmt.Scan(&url)
 	// var cl Client
 	// body, err := cl.RequestUrl(url)
