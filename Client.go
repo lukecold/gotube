@@ -18,6 +18,8 @@ type Client struct {
 	passWord string
 }
 
+//TODO: Find a way to log in
+
 /*
 Get a video list from given url
 */
@@ -99,13 +101,13 @@ func (*Client) GetVideoListFromJson(jsonData map[string]interface{}) (vl VideoLi
 	encodedStreamMap := args["url_encoded_fmt_stream_map"].(string)
 	videoListStr := Split(encodedStreamMap, ",")
 	for _, videoStr := range videoListStr {
-		videoStr, err = url.QueryUnescape(videoStr)
-		if err != nil {
-			return
-		}
 		videoParams := Split(videoStr, "&")
 		var video Video
 		for _, param := range videoParams {
+			param, err = url.QueryUnescape(param)
+			if err != nil {
+				return
+			}
 			switch {
 			case HasPrefix(param, "quality"):
 				video.quality = param[8:]
