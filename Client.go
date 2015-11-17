@@ -14,11 +14,20 @@ YouTube client
 You need to log in to view age-restricted videos
 */
 type Client struct {
-	userName string
-	passWord string
+	userName        string
+	passWord        string
+	videoRepository string
 }
 
 //TODO: Find a way to log in
+
+/*
+Get a video list from given id
+*/
+func (cl *Client) GetVideoListFromId(id string) (VideoList, error) {
+	url := "https://www.youtube.com/watch?v=" + id
+	return cl.GetVideoListFromUrl(url)
+}
 
 /*
 Get a video list from given url
@@ -39,7 +48,7 @@ func (cl *Client) GetVideoListFromUrl(url string) (vl VideoList, err error) {
 	if err != nil {
 		return
 	}
-	return 
+	return
 }
 
 /*

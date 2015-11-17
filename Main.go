@@ -1,14 +1,14 @@
 package main
 
- import (
-// 	"fmt"
- 	"log"
-// 	"os"
- )
+import (
+	// 	"fmt"
+	"log"
+	// 	"os"
+)
 
 func main() {
 	var url = "https://www.youtube.com/watch?v=HK6vQUDx0as"
-	var cl Client
+	var cl = Client{videoRepository: "videos"}
 	vl, err := cl.GetVideoListFromUrl(url)
 	if err != nil {
 		log.Fatal(err)

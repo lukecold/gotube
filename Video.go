@@ -33,12 +33,22 @@ func (video *Video) FindMissingFields() (missingFields []string) {
 	return
 }
 
-func (video *Video) Download(cl Client) (error) {
+func (video *Video) Download(cl Client) error {
 	//Get video from url
 	body, err := cl.GetHttpFromUrl(video.url)
 	if err != nil {
 		return err
 	}
+	var pathname string
+	if cl.videoRepository != "" {
+		//Make a directory and give every user highest permission
+		os.MkdirAll(cl.videoRepository, 0777)
+		pathname = cl.videoRepository
+		if !HasSuffix(pathname, "/") {
+			pathname += "/"
+		}
+	}
+
 	filename := video.title + video.extension
 	filename = Map(
 		func(r rune) rune {
@@ -47,6 +57,7 @@ func (video *Video) Download(cl Client) (error) {
 			}
 			return r
 		}, filename)
+	filename = pathname + filename
 	file, err := os.Create(filename)
 	if err != nil {
 		return err
@@ -85,7 +96,7 @@ func (vl *VideoList) Download(cl Client, quality, extension string) (err error) 
 	}
 
 	//No matter how many left, pick the first one
-	video := vl.videos[0] 
+	video := vl.videos[0]
 	err = video.Download(cl)
 	return err
 }
