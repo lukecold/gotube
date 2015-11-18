@@ -5,7 +5,7 @@ go:
 #Import path
 go_import_path: github.com/KeluDiao/gotube/gotube
 #Install dependency
-install: go get github.com/KeluDiao/gotube/api
+install: go install github.com/KeluDiao/gotube/gotube
 #Run test
 script: go test
 #Check how many lines of code are covered by the test

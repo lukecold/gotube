@@ -1,4 +1,4 @@
-# gotube
+# gotube ![build status](https://travis-ci.org/KeluDiao/gotube.svg?branch=master)
 ##Description
 Gotube is a YouTube downloader using go language.
 go language is a new light-weight language developed by Google, 
