@@ -5,7 +5,7 @@ go:
 #Import path
 go_import_path: github.com/KeluDiao/gotube/gotube
 #Run test
-script: go get github.com/KeluDiao/gotube && go test
+script: go get github.com/KeluDiao/gotube && go install github.com/KeluDiao/gotube/api && go test -v
 #Check how many lines of code are covered by the test
 #after_success:
 #	coveralls

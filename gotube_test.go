@@ -1,8 +1,9 @@
-package gotube
+package gotube_test
 
 import (
 	"os"
 	"testing"
+	. "github.com/KeluDiao/gotube/api"
 )
 
 func GetVideoListTesting(t *testing.T) {
@@ -16,8 +17,8 @@ func GetVideoListTesting(t *testing.T) {
 	if vl.Title != testTitle {
 		t.Fatalf("Expected title: %v, got: %v", testTitle, vl.Title)
 	}
-	if len(vl.videos) != 5 {
-		t.Fatalf("Expected 5 videos, got %v", len(vl.videos))
+	if len(vl.Videos) != 5 {
+		t.Fatalf("Expected 5 videos, got %v", len(vl.Videos))
 	}
 
 	//Testing invalid video
@@ -34,8 +35,8 @@ func DownloadTesting(t * testing.T) {
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
-	if len(vl.videos) != 1 {
-		t.Fatalf("Expected 1 videos after filtering, got %v", len(vl.videos))
+	if len(vl.Videos) != 1 {
+		t.Fatalf("Expected 1 videos after filtering, got %v", len(vl.Videos))
 	}
 	//Download video into ./videos
 	err = vl.Download(cl, "", "")

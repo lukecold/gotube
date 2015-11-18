@@ -23,7 +23,7 @@ type Video struct {
 */
 type VideoList struct {
 	Title  string
-	videos []Video
+	Videos []Video
 }
 
 /*
@@ -86,7 +86,7 @@ func (video *Video) Download(cl Client) error {
 */
 func (vl *VideoList) Append(v Video) {
 	v.Title = vl.Title
-	vl.videos = append(vl.videos, v)
+	vl.Videos = append(vl.Videos, v)
 }
 
 /*
@@ -98,7 +98,7 @@ func (vl *VideoList) Download(cl Client, quality, extension string) (err error) 
 	vl.Filter(quality, extension)
 
 	//No matter how many left, pick the first one
-	video := vl.videos[0]
+	video := vl.Videos[0]
 	err = video.Download(cl)
 	return err
 }
@@ -111,24 +111,24 @@ func (vl *VideoList) Filter(quality, extension string) (err error) {
 	var matchingVideos []Video
 	//Filter by quality
 	if quality != "" {
-		for _, video := range vl.videos {
+		for _, video := range vl.Videos {
 			if video.quality == quality {
 				matchingVideos = append(matchingVideos, video)
 			}
 		}
-		vl.videos = matchingVideos
+		vl.Videos = matchingVideos
 	}
 	matchingVideos = nil
 	//Filter by extension
 	if extension != "" {
-		for _, video := range vl.videos {
+		for _, video := range vl.Videos {
 			if video.extension == extension {
 				matchingVideos = append(matchingVideos, video)
 			}
 		}
-		vl.videos = matchingVideos
+		vl.Videos = matchingVideos
 	}
-	if len(vl.videos) == 0 {
+	if len(vl.Videos) == 0 {
 		err = NoMatchingVideoError{_quality: quality, _extension: extension}
 		return
 	}
@@ -142,7 +142,7 @@ func (vl VideoList) String() string {
 	var videoListStr string
 	videoListStr += fmt.Sprintf("video Title: " + vl.Title + "\n")
 	videoListStr += fmt.Sprintf("Index\tquality\textension\n")
-	for idx, video := range vl.videos {
+	for idx, video := range vl.Videos {
 		videoListStr += fmt.Sprintf(" %v\t%v\t%v\n", 
 			strconv.Itoa(idx),
 			video.quality,
