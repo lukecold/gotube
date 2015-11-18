@@ -106,7 +106,7 @@ Get video from json data
 */
 func (*Client) GetVideoListFromJson(jsonData map[string]interface{}) (vl VideoList, err error) {
 	args := jsonData["args"].(map[string]interface{})
-	vl.Title = args["Title"].(string)
+	vl.Title = args["title"].(string)
 	encodedStreamMap := args["url_encoded_fmt_stream_map"].(string)
 	videoListStr := Split(encodedStreamMap, ",")
 	for _, videoStr := range videoListStr {

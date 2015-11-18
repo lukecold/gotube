@@ -1,6 +1,7 @@
-package gotube
+package main
 
 import (
+	. "github.com/KeluDiao/gotube/api"
 	"flag"
 	"log"
 	"fmt"

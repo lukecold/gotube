@@ -44,13 +44,13 @@ gotube -d -id C0DPdy98e4c -q medium -ext video/mp4 -rep ./videos
 package main
 
 import (
-  "github.com/KeluDiao/gotube"
+  . "github.com/KeluDiao/gotube/api"
   "log"
 )
 
 func main() {
 	idList := [...]string{"shLTrG_noKo", "Ojv7tKpzkyM", "GahnMbhmt7g"}
-	cl := gotube.Client{VideoRepository: "Curry_highlights"}
+	cl := Client{VideoRepository: "Curry_highlights"}
 	for _, id := range idList {
 		vl, err := cl.GetVideoListFromId(id)
 		if err != nil {
