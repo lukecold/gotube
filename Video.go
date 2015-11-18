@@ -1,4 +1,4 @@
-package main
+package gotube
 
 import (
 	"fmt"
@@ -74,6 +74,15 @@ func (vl *VideoList) Append(v Video) {
 }
 
 func (vl *VideoList) Download(cl Client, quality, extension string) (err error) {
+	vl.Filter(quality, extension)
+
+	//No matter how many left, pick the first one
+	video := vl.videos[0]
+	err = video.Download(cl)
+	return err
+}
+
+func (vl *VideoList) Filter(quality, extension string) (err error) {
 	var matchingVideos []Video
 	if quality != "" {
 		for _, video := range vl.videos {
@@ -96,11 +105,7 @@ func (vl *VideoList) Download(cl Client, quality, extension string) (err error) 
 		err = NoMatchingVideoError{_quality: quality, _extension: extension}
 		return
 	}
-
-	//No matter how many left, pick the first one
-	video := vl.videos[0]
-	err = video.Download(cl)
-	return err
+	return
 }
 
 func (vl VideoList) String() string {

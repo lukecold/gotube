@@ -1,4 +1,4 @@
-package main
+package gotube
 
 import (
 	"flag"
@@ -49,8 +49,13 @@ func main() {
 
 	//var url = "https://www.youtube.com/watch?v=6LZM3_wp2ps"
 	cl := Client{videoRepository: *rep}
-	
-	vl, err := cl.GetVideoListFromUrl(*url)
+	var vl VideoList
+	var err error
+	if *url != "" {
+		vl, err = cl.GetVideoListFromUrl(*url)
+	} else {
+		vl, err = cl.GetVideoListFromId(*id)
+	}
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -60,6 +65,10 @@ func main() {
 			log.Fatal(err)
 		}	
 	} else if *isRetList {
+		err = vl.Filter(*quality, *extension)
+		if err != nil {
+			log.Fatal(err)
+		}
 		fmt.Println(vl)
 	}
 }
