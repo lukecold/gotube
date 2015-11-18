@@ -9,8 +9,8 @@ install: go get github.com/KeluDiao/gotube/api
 #Run test
 script: go test
 #Check how many lines of code are covered by the test
-after_success:
-	coveralls
+#after_success:
+#	coveralls
 #Don't send me email
 notifications:
   email: false
