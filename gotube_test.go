@@ -1,4 +1,4 @@
-package gotube_test
+package main
 
 import (
 	. "github.com/KeluDiao/gotube/api"

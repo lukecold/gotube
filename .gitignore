@@ -2,6 +2,7 @@
 *.o
 *.a
 *.so
+.DS_Store
 
 # Folders
 _obj
@@ -22,4 +23,3 @@ _testmain.go
 *.exe
 *.test
 *.prof
-.DS_Store
