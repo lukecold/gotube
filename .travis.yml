@@ -2,8 +2,6 @@ language: go
 #Set go version to the latest
 go:
   - tip
-#Import path
-go_import_path: github.com/KeluDiao/gotube/gotube
 #Run test
 script: go install github.com/KeluDiao/gotube && go test -v
 #Check how many lines of code are covered by the test
