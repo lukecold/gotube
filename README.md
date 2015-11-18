@@ -1,5 +1,4 @@
-# gotube ![build status](https://travis-ci.org/KeluDiao/gotube.svg?branch=master) [![Coverage Status](https://coveralls.io/repos/KeluDiao/gotube/badge.svg?branch=master&service=github)](https://coveralls.io/github/KeluDiao/gotube?branch=master)
-##Description
+# gotube ![build status](https://travis-ci.org/KeluDiao/gotube.svg?branch=master)
 Gotube is a YouTube downloader using go language.
 go language is a new light-weight language developed by Google, 
 it provides not only many powerful libraries, but also a simple multi-threading syntax.
