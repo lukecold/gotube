@@ -90,14 +90,6 @@ func (vl *VideoList) Append(v Video) {
 }
 
 /*
-* Default download function
-*/
-func (vl *VideoList) Download(cl Client) (err error) {
-	err = vl.Download(cl, "", "")
-	return
-}
-
-/*
 * Download a video from the video list.
 * Filter the list first by the given key words, 
 * then download the first video in the list

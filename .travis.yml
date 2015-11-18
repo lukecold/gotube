@@ -8,10 +8,6 @@ go_import_path: github.com/KeluDiao/gotube/gotube
 install: go get github.com/KeluDiao/gotube/api
 #Run test
 script: go test
-#only test master branch
-branches:
-	only:
-		-master
 #Check how many lines of code are covered by the test
 after_success:
 	coveralls
