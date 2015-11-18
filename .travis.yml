@@ -1,4 +1,4 @@
 language: go
-script: go get github.com/KeluDiao/gotube/gotube && go test
+script: go test
 notifications:
   email: false
