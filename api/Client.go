@@ -11,14 +11,14 @@ import (
 
 /*
 * YouTube client.
-*/
+ */
 type Client struct {
 	VideoRepository string
 }
 
 /*
 * Get a video list from given id.
-*/
+ */
 func (cl *Client) GetVideoListFromId(id string) (VideoList, error) {
 	url := "https://www.youtube.com/watch?v=" + id
 	return cl.GetVideoListFromUrl(url)
@@ -26,7 +26,7 @@ func (cl *Client) GetVideoListFromId(id string) (VideoList, error) {
 
 /*
 * Get a video list from given url.
-*/
+ */
 func (cl *Client) GetVideoListFromUrl(url string) (vl VideoList, err error) {
 	//Get webpage content from url
 	body, err := cl.GetHttpFromUrl(url)
@@ -48,7 +48,7 @@ func (cl *Client) GetVideoListFromUrl(url string) (vl VideoList, err error) {
 
 /*
 * Initialize a GET request, and get the http code of the webpage.
-*/
+ */
 func (cl *Client) GetHttpFromUrl(url string) ([]byte, error) {
 	resp, err := http.Get(url)
 	if err != nil {
@@ -64,7 +64,7 @@ func (cl *Client) GetHttpFromUrl(url string) ([]byte, error) {
 
 /*
 * Get json data from http code.
-*/
+ */
 func (*Client) GetJsonFromHttp(httpData []byte) (map[string]interface{}, error) {
 	//Find out if this page is age-restricted
 	if bytes.Index(httpData, []byte("og:restrictions:age")) != -1 {
@@ -102,7 +102,7 @@ func (*Client) GetJsonFromHttp(httpData []byte) (map[string]interface{}, error) 
 
 /*
 * Get video list from json data retrieved from http code.
-*/
+ */
 func (*Client) GetVideoListFromJson(jsonData map[string]interface{}) (vl VideoList, err error) {
 	args := jsonData["args"].(map[string]interface{})
 	vl.Title = args["title"].(string)
@@ -123,9 +123,9 @@ func (*Client) GetVideoListFromJson(jsonData map[string]interface{}) (vl VideoLi
 			}
 			switch {
 			case HasPrefix(param, "quality"):
-				video.quality = param[8:]	
+				video.quality = param[8:]
 			case HasPrefix(param, "type"):
-				//type and codecs are seperated by ";" 
+				//type and codecs are seperated by ";"
 				video.extension = Split(param, ";")[0][5:]
 			case HasPrefix(param, "url"):
 				video.url = param[4:]

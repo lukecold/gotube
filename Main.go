@@ -1,10 +1,10 @@
 package main
 
 import (
-	. "github.com/KeluDiao/gotube/api"
 	"flag"
-	"log"
 	"fmt"
+	. "github.com/KeluDiao/gotube/api"
+	"log"
 )
 
 func main() {
@@ -21,7 +21,7 @@ func main() {
 	isHelp := flag.Bool("h", false, "help")
 
 	flag.Parse()
-	
+
 	if *isHelp {
 		fmt.Println("Usage:")
 		flag.PrintDefaults()
@@ -66,7 +66,7 @@ func main() {
 		err = vl.Download(cl, *quality, *extension)
 		if err != nil {
 			log.Fatal(err)
-		}	
+		}
 	} else if *isRetList {
 		err = vl.Filter(*quality, *extension)
 		if err != nil {

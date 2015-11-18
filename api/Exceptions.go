@@ -5,7 +5,7 @@ import (
 	. "strings"
 )
 
-type AgeRestrictedError struct {}
+type AgeRestrictedError struct{}
 
 type MissingFieldsError struct {
 	_fields []string

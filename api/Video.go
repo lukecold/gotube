@@ -9,7 +9,7 @@ import (
 
 /*
 * YouTube video
-*/
+ */
 type Video struct {
 	Title     string
 	url       string
@@ -20,7 +20,7 @@ type Video struct {
 /*
 * A list of YouTube video with different resolutions
 * that shared the same YouTube url.
-*/
+ */
 type VideoList struct {
 	Title  string
 	Videos []Video
@@ -29,7 +29,7 @@ type VideoList struct {
 /*
 * Check if any field is missing.
 * A missing filed means a bug found in this program.
-*/
+ */
 func (video *Video) FindMissingFields() (missingFields []string) {
 	if video.quality == "" {
 		missingFields = append(missingFields, "quality")
@@ -46,7 +46,7 @@ func (video *Video) FindMissingFields() (missingFields []string) {
 /*
 * Download this video into the repository,
 * if repository is not generated, download to current folder.
-*/
+ */
 func (video *Video) Download(cl Client) error {
 	//Get video from url
 	body, err := cl.GetHttpFromUrl(video.url)
@@ -83,7 +83,7 @@ func (video *Video) Download(cl Client) error {
 
 /*
 * Append a video to the video list, video title is assigned here
-*/
+ */
 func (vl *VideoList) Append(v Video) {
 	v.Title = vl.Title
 	vl.Videos = append(vl.Videos, v)
@@ -91,9 +91,9 @@ func (vl *VideoList) Append(v Video) {
 
 /*
 * Download a video from the video list.
-* Filter the list first by the given key words, 
+* Filter the list first by the given key words,
 * then download the first video in the list
-*/
+ */
 func (vl *VideoList) Download(cl Client, quality, extension string) (err error) {
 	vl.Filter(quality, extension)
 
@@ -106,7 +106,7 @@ func (vl *VideoList) Download(cl Client, quality, extension string) (err error) 
 /*
 * Filter the video list by given key words.
 * The videos don't match are removed from list.
-*/
+ */
 func (vl *VideoList) Filter(quality, extension string) (err error) {
 	var matchingVideos []Video
 	//Filter by quality
@@ -136,14 +136,14 @@ func (vl *VideoList) Filter(quality, extension string) (err error) {
 }
 
 /*
-* Implemented String interface to output VideoList in a delightful format 
-*/
+* Implemented String interface to output VideoList in a delightful format
+ */
 func (vl VideoList) String() string {
 	var videoListStr string
 	videoListStr += fmt.Sprintf("video Title: " + vl.Title + "\n")
 	videoListStr += fmt.Sprintf("Index\tquality\textension\n")
 	for idx, video := range vl.Videos {
-		videoListStr += fmt.Sprintf(" %v\t%v\t%v\n", 
+		videoListStr += fmt.Sprintf(" %v\t%v\t%v\n",
 			strconv.Itoa(idx),
 			video.quality,
 			video.extension)

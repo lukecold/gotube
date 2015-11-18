@@ -1,16 +1,16 @@
 package gotube_test
 
 import (
+	. "github.com/KeluDiao/gotube/api"
 	"os"
 	"testing"
-	. "github.com/KeluDiao/gotube/api"
 )
 
 func GetVideoListTesting(t *testing.T) {
 	//Testing valid video
 	testTitle := "TEST VIDEO"
-	cl := Client {VideoRepository: "videos"}
-	vl, err := cl.GetVideoListFromId("C0DPdy98e4c")	//Get test video
+	cl := Client{VideoRepository: "videos"}
+	vl, err := cl.GetVideoListFromId("C0DPdy98e4c") //Get test video
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -28,9 +28,9 @@ func GetVideoListTesting(t *testing.T) {
 	}
 }
 
-func DownloadTesting(t * testing.T) {
-	cl := Client {VideoRepository: "videos"}
-	vl, err := cl.GetVideoListFromId("C0DPdy98e4c")	//Get test video
+func DownloadTesting(t *testing.T) {
+	cl := Client{VideoRepository: "videos"}
+	vl, err := cl.GetVideoListFromId("C0DPdy98e4c") //Get test video
 	err = vl.Filter("medium", "video/mp4")
 	if err != nil {
 		t.Fatalf(err.Error())
