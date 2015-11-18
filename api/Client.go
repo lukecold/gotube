@@ -10,15 +10,14 @@ import (
 )
 
 /*
-YouTube client
-You need to log in to view age-restricted videos
+* YouTube client.
 */
 type Client struct {
 	VideoRepository string
 }
 
 /*
-Get a video list from given id
+* Get a video list from given id.
 */
 func (cl *Client) GetVideoListFromId(id string) (VideoList, error) {
 	url := "https://www.youtube.com/watch?v=" + id
@@ -26,7 +25,7 @@ func (cl *Client) GetVideoListFromId(id string) (VideoList, error) {
 }
 
 /*
-Get a video list from given url
+* Get a video list from given url.
 */
 func (cl *Client) GetVideoListFromUrl(url string) (vl VideoList, err error) {
 	//Get webpage content from url
@@ -48,7 +47,7 @@ func (cl *Client) GetVideoListFromUrl(url string) (vl VideoList, err error) {
 }
 
 /*
-Request http code from url
+* Initialize a GET request, and get the http code of the webpage.
 */
 func (cl *Client) GetHttpFromUrl(url string) ([]byte, error) {
 	resp, err := http.Get(url)
@@ -64,7 +63,7 @@ func (cl *Client) GetHttpFromUrl(url string) ([]byte, error) {
 }
 
 /*
-Get json data
+* Get json data from http code.
 */
 func (*Client) GetJsonFromHttp(httpData []byte) (map[string]interface{}, error) {
 	//Find out if this page is age-restricted
@@ -102,25 +101,31 @@ func (*Client) GetJsonFromHttp(httpData []byte) (map[string]interface{}, error) 
 }
 
 /*
-Get video from json data
+* Get video list from json data retrieved from http code.
 */
 func (*Client) GetVideoListFromJson(jsonData map[string]interface{}) (vl VideoList, err error) {
 	args := jsonData["args"].(map[string]interface{})
 	vl.Title = args["title"].(string)
 	encodedStreamMap := args["url_encoded_fmt_stream_map"].(string)
+	//Videos are seperated by ","
 	videoListStr := Split(encodedStreamMap, ",")
 	for _, videoStr := range videoListStr {
+		//Parameters of a video are seperated by "&"
 		videoParams := Split(videoStr, "&")
 		var video Video
 		for _, param := range videoParams {
+			/*Unescape the url encoding characters.
+			Only do it after seperation because
+			there are "," and "&" escaped in url*/
 			param, err = url.QueryUnescape(param)
 			if err != nil {
 				return
 			}
 			switch {
 			case HasPrefix(param, "quality"):
-				video.quality = param[8:]
+				video.quality = param[8:]	
 			case HasPrefix(param, "type"):
+				//type and codecs are seperated by ";" 
 				video.extension = Split(param, ";")[0][5:]
 			case HasPrefix(param, "url"):
 				video.url = param[4:]

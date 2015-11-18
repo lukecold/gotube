@@ -8,7 +8,7 @@ import (
 )
 
 /*
-YouTube video
+* YouTube video
 */
 type Video struct {
 	Title     string
@@ -17,11 +17,19 @@ type Video struct {
 	extension string
 }
 
+/*
+* A list of YouTube video with different resolutions
+* that shared the same YouTube url.
+*/
 type VideoList struct {
 	Title  string
 	videos []Video
 }
 
+/*
+* Check if any field is missing.
+* A missing filed means a bug found in this program.
+*/
 func (video *Video) FindMissingFields() (missingFields []string) {
 	if video.quality == "" {
 		missingFields = append(missingFields, "quality")
@@ -35,6 +43,10 @@ func (video *Video) FindMissingFields() (missingFields []string) {
 	return
 }
 
+/*
+* Download this video into the repository,
+* if repository is not generated, download to current folder.
+*/
 func (video *Video) Download(cl Client) error {
 	//Get video from url
 	body, err := cl.GetHttpFromUrl(video.url)
@@ -52,6 +64,7 @@ func (video *Video) Download(cl Client) error {
 	}
 
 	filename := video.Title + video.extension
+	//Make sure there is no invalid characters in filename
 	filename = Map(
 		func(r rune) rune {
 			if r == '/' {
@@ -68,11 +81,27 @@ func (video *Video) Download(cl Client) error {
 	return nil
 }
 
+/*
+* Append a video to the video list, video title is assigned here
+*/
 func (vl *VideoList) Append(v Video) {
 	v.Title = vl.Title
 	vl.videos = append(vl.videos, v)
 }
 
+/*
+* Default download function
+*/
+func (vl *VideoList) Download(cl Client) (err error) {
+	err = vl.Download(cl, "", "")
+	return
+}
+
+/*
+* Download a video from the video list.
+* Filter the list first by the given key words, 
+* then download the first video in the list
+*/
 func (vl *VideoList) Download(cl Client, quality, extension string) (err error) {
 	vl.Filter(quality, extension)
 
@@ -82,8 +111,13 @@ func (vl *VideoList) Download(cl Client, quality, extension string) (err error) 
 	return err
 }
 
+/*
+* Filter the video list by given key words.
+* The videos don't match are removed from list.
+*/
 func (vl *VideoList) Filter(quality, extension string) (err error) {
 	var matchingVideos []Video
+	//Filter by quality
 	if quality != "" {
 		for _, video := range vl.videos {
 			if video.quality == quality {
@@ -93,6 +127,7 @@ func (vl *VideoList) Filter(quality, extension string) (err error) {
 		vl.videos = matchingVideos
 	}
 	matchingVideos = nil
+	//Filter by extension
 	if extension != "" {
 		for _, video := range vl.videos {
 			if video.extension == extension {
@@ -108,6 +143,9 @@ func (vl *VideoList) Filter(quality, extension string) (err error) {
 	return
 }
 
+/*
+* Implemented String interface to output VideoList in a delightful format 
+*/
 func (vl VideoList) String() string {
 	var videoListStr string
 	videoListStr += fmt.Sprintf("video Title: " + vl.Title + "\n")

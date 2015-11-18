@@ -1,0 +1,20 @@
+language: go
+#Set go version to the latest
+go:
+  - tip
+#Import path
+go_import_path: github.com/KeluDiao/gotube/gotube
+#Install dependency
+install: go get github.com/KeluDiao/gotube/api
+#Run test
+script: go test
+#only test master branch
+branches:
+	only:
+		-master
+#Check how many lines of code are covered by the test
+after_success:
+	coveralls
+#Don't send me email
+notifications:
+  email: false

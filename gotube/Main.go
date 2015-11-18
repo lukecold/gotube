@@ -48,8 +48,9 @@ func main() {
 		return
 	}
 
-	//var url = "https://www.youtube.com/watch?v=6LZM3_wp2ps"
+	//Initialize a client
 	cl := Client{VideoRepository: *rep}
+	//Get the video list
 	var vl VideoList
 	var err error
 	if *url != "" {
@@ -60,6 +61,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	//Choose either downloading or retrieving video list
 	if *isDownload {
 		err = vl.Download(cl, *quality, *extension)
 		if err != nil {
