@@ -11,14 +11,14 @@ import (
 YouTube video
 */
 type Video struct {
-	title     string
+	Title     string
 	url       string
 	quality   string
 	extension string
 }
 
 type VideoList struct {
-	title  string
+	Title  string
 	videos []Video
 }
 
@@ -42,16 +42,16 @@ func (video *Video) Download(cl Client) error {
 		return err
 	}
 	var pathname string
-	if cl.videoRepository != "" {
+	if cl.VideoRepository != "" {
 		//Make a directory and give every user highest permission
-		os.MkdirAll(cl.videoRepository, 0777)
-		pathname = cl.videoRepository
+		os.MkdirAll(cl.VideoRepository, 0777)
+		pathname = cl.VideoRepository
 		if !HasSuffix(pathname, "/") {
 			pathname += "/"
 		}
 	}
 
-	filename := video.title + video.extension
+	filename := video.Title + video.extension
 	filename = Map(
 		func(r rune) rune {
 			if r == '/' {
@@ -69,7 +69,7 @@ func (video *Video) Download(cl Client) error {
 }
 
 func (vl *VideoList) Append(v Video) {
-	v.title = vl.title
+	v.Title = vl.Title
 	vl.videos = append(vl.videos, v)
 }
 
@@ -110,7 +110,7 @@ func (vl *VideoList) Filter(quality, extension string) (err error) {
 
 func (vl VideoList) String() string {
 	var videoListStr string
-	videoListStr += fmt.Sprintf("video title: " + vl.title + "\n")
+	videoListStr += fmt.Sprintf("video Title: " + vl.Title + "\n")
 	videoListStr += fmt.Sprintf("Index\tquality\textension\n")
 	for idx, video := range vl.videos {
 		videoListStr += fmt.Sprintf(" %v\t%v\t%v\n", 

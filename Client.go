@@ -14,7 +14,7 @@ YouTube client
 You need to log in to view age-restricted videos
 */
 type Client struct {
-	videoRepository string
+	VideoRepository string
 }
 
 /*
@@ -106,7 +106,7 @@ Get video from json data
 */
 func (*Client) GetVideoListFromJson(jsonData map[string]interface{}) (vl VideoList, err error) {
 	args := jsonData["args"].(map[string]interface{})
-	vl.title = args["title"].(string)
+	vl.Title = args["Title"].(string)
 	encodedStreamMap := args["url_encoded_fmt_stream_map"].(string)
 	videoListStr := Split(encodedStreamMap, ",")
 	for _, videoStr := range videoListStr {

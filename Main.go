@@ -11,7 +11,7 @@ func main() {
 	isRetList := flag.Bool("l", false, "use this flag to retrieve video list")
 	url := flag.String("url", "", "video url")
 	id := flag.String("id", "", "video id")
-	rep := flag.String("-videorepository", "", "(optional) repository to store videos (please use relative path)")
+	rep := flag.String("-VideoRepository", "", "(optional) repository to store videos (please use relative path)")
 	flag.StringVar(rep, "rep", "", "(optional) repository to store videos (please use relative path)")
 	quality := flag.String("-quality", "", "(optional) video quality. e.g. medium")
 	flag.StringVar(quality, "q", "", "(optional) video quality. e.g. medium")
@@ -48,7 +48,7 @@ func main() {
 	}
 
 	//var url = "https://www.youtube.com/watch?v=6LZM3_wp2ps"
-	cl := Client{videoRepository: *rep}
+	cl := Client{VideoRepository: *rep}
 	var vl VideoList
 	var err error
 	if *url != "" {
