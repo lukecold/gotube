@@ -14,7 +14,6 @@ it provides not only many powerful libraries, but also a simple multi-threading 
   	- In environment variables add GOPATH=path/to/workspace/ 
   	- Append path/to/workspace/bin to PATH
 - For command-line usage
-  - Download the zip file or clone the project to path/to/workspace/src/
   - Type the following in command/terminal
     - ```go get github.com/KeluDiao/gotube```
     - ```go install github.com/KeluDiao/gotube/gotube```
