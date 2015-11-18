@@ -7,12 +7,16 @@ it provides not only many powerful libraries, but also a simple multi-threading 
 ##Installation
 - Install go from [https://golang.org/](https://golang.org/)
 - Set up go environment as in [https://golang.org/doc/install](https://golang.org/doc/install)
-  - (For Un*x users) ```export GOPATH=$HOME/path/to/workspace/```
-  - (For Windows users) Add GOPATH=path/to/workspace/ in environment variables
+  - (For Un*x users) 
+  	- ```export GOPATH=$HOME/path/to/workspace/```
+  	- ```export PATH=$PATH:$GOPATH/bin```
+  - (For Windows users) 
+  	- In environment variables add GOPATH=path/to/workspace/ 
+  	- Append path/to/workspace/bin to PATH
 - For command-line usage
-  - Download the zip file or clone the project to path/to/workspace/src/
   - Type the following in command/terminal
-    - ```go install gotube```
+    - ```go get github.com/KeluDiao/gotube```
+    - ```go install github.com/KeluDiao/gotube/gotube```
     - ```gotube -h```
 - For library usage
   - You don't need to do anything
