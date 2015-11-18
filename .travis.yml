@@ -1,12 +1,4 @@
 language: go
-#Set go version to the latest
-go:
-  - tip
-#Run test
 script: go get github.com/KeluDiao/gotube/gotube && go test -v
-#Check how many lines of code are covered by the test
-#after_success:
-#	coveralls
-#Don't send me email
 notifications:
   email: false
