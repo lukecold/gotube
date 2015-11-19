@@ -15,7 +15,6 @@ it provides not only many powerful libraries, but also a simple multi-threading 
 - For command-line usage
   - Type the following in command/terminal
     - ```go get github.com/KeluDiao/gotube```
-    - ```go install github.com/KeluDiao/gotube/gotube```
     - ```gotube -h```
 - For library usage
   - You don't need to do anything
