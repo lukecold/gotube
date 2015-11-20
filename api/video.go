@@ -67,8 +67,11 @@ func (video *Video) Download(cl Client) error {
 	//Make sure there is no invalid characters in filename
 	filename = Map(
 		func(r rune) rune {
-			if r == '/' {
+			switch r {
+			case '/', '\\':
 				r = '.'
+			case ':', '*', '?', '"', '<', '>', '|':
+				r = '-'
 			}
 			return r
 		}, filename)
@@ -77,7 +80,10 @@ func (video *Video) Download(cl Client) error {
 	if err != nil {
 		return err
 	}
-	file.Write(body)
+	_, err = file.Write(body)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 

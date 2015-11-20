@@ -3,6 +3,7 @@ package gotube
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -68,7 +69,7 @@ func (cl *Client) GetHttpFromUrl(url string) ([]byte, error) {
 func (*Client) GetJsonFromHttp(httpData []byte) (map[string]interface{}, error) {
 	//Find out if this page is age-restricted
 	if bytes.Index(httpData, []byte("og:restrictions:age")) != -1 {
-		return nil, AgeRestrictedError{}
+		return nil, errors.New("this page is age-restricted")
 	}
 	//Find begining of json data
 	var jsonBeg = "ytplayer.config = {"
@@ -84,7 +85,7 @@ func (*Client) GetJsonFromHttp(httpData []byte) (map[string]interface{}, error) 
 	for unmatchedBrackets > 0 {
 		nextRight := bytes.Index(httpData[beg+offset:], []byte("}"))
 		if nextRight == -1 {
-			return nil, UnmatchedBracketsError{}
+			return nil, errors.New("unmatched brackets")
 		}
 		unmatchedBrackets -= 1
 		unmatchedBrackets += bytes.Count(httpData[beg+offset:beg+offset+nextRight], []byte("{"))

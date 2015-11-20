@@ -41,7 +41,7 @@ Specify a video repository using relative path:
 gotube -d -id C0DPdy98e4c -q medium -ext video/mp4 -rep ./videos
 ```
 ```
-Specify a video repository using absolute path:
+Specify a video repository using absolute path (If you are a Windows user, I highly recommend you using absolute path, or the videos may be downloaded into your users folder):
 ```
 gotube -d -id C0DPdy98e4c -q medium -ext video/mp4 -rep /Users/yourusername/Documents/videos
 ```

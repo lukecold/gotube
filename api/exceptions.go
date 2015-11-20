@@ -5,8 +5,6 @@ import (
 	. "strings"
 )
 
-type AgeRestrictedError struct{}
-
 type MissingFieldsError struct {
 	_fields []string
 }
@@ -20,18 +18,12 @@ type PatternNotFoundError struct {
 	_pattern string
 }
 
-type UnmatchedBracketsError struct{}
-
-func (AgeRestrictedError) Error() string {
-	return fmt.Sprintf("Error: this page is age-restricted")
-}
-
 func (e MissingFieldsError) Error() string {
-	return fmt.Sprintf("Error: detected missing field(s): %v", Join(e._fields, ", "))
+	return fmt.Sprintf("detected missing field(s): %v", Join(e._fields, ", "))
 }
 
 func (e NoMatchingVideoError) Error() string {
-	errorMessage := "Error: no matching videos with"
+	errorMessage := "no matching videos with"
 	if e._quality != "" {
 		errorMessage += " quality=" + e._quality
 	}
@@ -42,9 +34,5 @@ func (e NoMatchingVideoError) Error() string {
 }
 
 func (e PatternNotFoundError) Error() string {
-	return fmt.Sprintf("Error: pattern \"%v\" not found", e._pattern)
-}
-
-func (UnmatchedBracketsError) Error() string {
-	return fmt.Sprintf("Error: unmatched brackets")
+	return fmt.Sprintf("pattern \"%v\" not found", e._pattern)
 }
