@@ -44,6 +44,18 @@ Specify a video repository using absolute path (If you are a Windows user, I hig
 ```
 gotube -d -id C0DPdy98e4c -q medium -ext video/mp4 -rep /Users/yourusername/Documents/videos
 ```
+Try search by keywords and see what would return:
+```
+gotube -l -s "curry highlights"
+```
+Try get more results by querying top k results explicitly (If k is larger than the number of all videos return, the program would return all the videos):
+```
+gotube -l -s "curry highlights" -k 5
+```
+Download all of them:
+```
+gotube -d -s "curry highlights" -k 5 -rep /Users/yourusername/Documents/videos
+```
 
 #Library usage
 ```go

@@ -22,8 +22,8 @@ type Video struct {
 * that shared the same YouTube url.
  */
 type VideoList struct {
-	Title  string
-	Videos []Video
+	Title   string
+	Videos  []Video
 }
 
 /*

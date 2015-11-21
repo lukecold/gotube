@@ -12,8 +12,9 @@ func main() {
 	isRetList := flag.Bool("l", false, "use this flag to retrieve video list")
 	url := flag.String("url", "", "video url")
 	id := flag.String("id", "", "video id")
-	search := flag.String("-search", "", "search by key words")
-	flag.StringVar(search, "s", "", "search by key words")
+	search := flag.String("-search", "", "search by key words (specify top k with command -k)")
+	flag.StringVar(search, "s", "", "search by key words (specify top k with command -k)")
+	k := flag.Int("k", 1, "return top k results, only valid with key word searching")
 	rep := flag.String("-videorepository", "", "(optional) repository to store videos")
 	flag.StringVar(rep, "rep", "", "(optional) repository to store videos")
 	quality := flag.String("-quality", "", "(optional) video quality. e.g. medium")
@@ -69,23 +70,41 @@ func main() {
 	} else if *id != "" {
 		vl, err = GetVideoListFromId(*id)
 	} else {
-		ids, err := GetTopKVideoIds(*search, 1)
+		ids, err := GetTopKVideoIds(*search, *k)
 		if err != nil {
 			log.Fatal(err)
 		}
-		vl, err = GetVideoListFromId(ids[0])
+		if *isRetList {
+			fmt.Printf("The top %v results for key words \"%v\" are:\n\n", *k, *search)
+		}
+		for _, vid := range ids {
+			vl, err = GetVideoListFromId(vid)
+			if err != nil {
+				log.Fatal(err)
+			}
+			Exec(vl, *isDownload, *isRetList, *rep, *quality, *extension)
+		}
+		return
 	}
 	if err != nil {
 		log.Fatal(err)
 	}
-	//Choose either downloading or retrieving video list
-	if *isDownload {
-		err = vl.Download(*rep, *quality, *extension)
+	Exec(vl, *isDownload, *isRetList, *rep, *quality, *extension)
+}
+
+/*
+* Choose either downloading or retrieving video list
+*/
+func Exec(vl VideoList, isDownload, isRetList bool, rep, quality, extension string) {
+	if isDownload {
+		fmt.Printf("Downloading %v...\n", vl.Title)
+		err := vl.Download(rep, quality, extension)
 		if err != nil {
 			log.Fatal(err)
 		}
-	} else if *isRetList {
-		err = vl.Filter(*quality, *extension)
+	} else if isRetList {
+		fmt.Printf("Videos under the name of %v:\n", vl.Title)
+		err := vl.Filter(quality, extension)
 		if err != nil {
 			log.Fatal(err)
 		}
