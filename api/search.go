@@ -106,6 +106,9 @@ func GetVideoIdsFromPage(searchUrl string) (idList []string, err error) {
 	return
 }
 
+/*
+* Convert a map[string]bool to string array
+*/
 func MapToArray(m map[string]bool, a *[]string) {
 	for key, _ := range m {
 		*a = append(*a, key)

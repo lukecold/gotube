@@ -9,8 +9,7 @@ import (
 func GetVideoListTesting(t *testing.T) {
 	//Testing valid video
 	testTitle := "TEST VIDEO"
-	cl := Client{VideoRepository: "videos"}
-	vl, err := cl.GetVideoListFromId("C0DPdy98e4c") //Get test video
+	vl, err := GetVideoListFromId("C0DPdy98e4c") //Get test video
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -22,15 +21,15 @@ func GetVideoListTesting(t *testing.T) {
 	}
 
 	//Testing invalid video
-	vl, err = cl.GetVideoListFromId("I'm not a valid video id")
+	vl, err = GetVideoListFromId("I'm not a valid video id")
 	if err == nil {
 		t.Fatalf("Expected error for invalid video id")
 	}
 }
 
 func DownloadTesting(t *testing.T) {
-	cl := Client{VideoRepository: "videos"}
-	vl, err := cl.GetVideoListFromId("C0DPdy98e4c") //Get test video
+	rep := "videos"
+	vl, err := GetVideoListFromId("C0DPdy98e4c") //Get test video
 	err = vl.Filter("medium", "video/mp4")
 	if err != nil {
 		t.Fatalf(err.Error())
@@ -39,7 +38,7 @@ func DownloadTesting(t *testing.T) {
 		t.Fatalf("Expected 1 videos after filtering, got %v", len(vl.Videos))
 	}
 	//Download video into ./videos
-	err = vl.Download(cl, "", "")
+	err = vl.Download(rep, "", "")
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
