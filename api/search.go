@@ -10,7 +10,7 @@ import (
 /*
 * Get the top k video id from the search result.
 * If k is larger than the number of search result, this function would return all the search result
-*/
+ */
 func GetTopKVideoIds(keywords string, k int) ([]string, error) {
 	num := 0
 	pageNum := 1
@@ -31,7 +31,7 @@ func GetTopKVideoIds(keywords string, k int) ([]string, error) {
 		idIdx := 0
 		for num < k && idIdx < len(idListOfPage) {
 			_, ok := set[idListOfPage[idIdx]]
-			if ok {	//We have ran out of search results, it's repeating the last page
+			if ok { //We have ran out of search results, it's repeating the last page
 				MapToArray(set, &idList)
 				return idList, err
 			} else { //This id is new
@@ -48,7 +48,7 @@ func GetTopKVideoIds(keywords string, k int) ([]string, error) {
 
 /*
 * Get a search url from the provided keywords
-*/
+ */
 func GetSearchUrl(keywords string, pageNum int) (searchUrl string, err error) {
 	//Replace ' ' with '+', like what the YouTube search does
 	keywords = Map(
@@ -76,7 +76,7 @@ func GetSearchUrl(keywords string, pageNum int) (searchUrl string, err error) {
 
 /*
 * Convert a map[string]bool to string array
-*/
+ */
 func MapToArray(m map[string]bool, a *[]string) {
 	for key, _ := range m {
 		*a = append(*a, key)

@@ -89,7 +89,7 @@ func GetVideoListFromJson(jsonData map[string]interface{}) (vl VideoList, err er
 
 /*
 * Parse the http data of the page get from url and retrieve the id list
-*/
+ */
 func GetVideoIdsFromSearch(searchUrl string) (idList []string, err error) {
 	//Get the http code of the page get from url
 	body, err := GetHttpFromUrl(searchUrl)
