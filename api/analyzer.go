@@ -11,36 +11,29 @@ import (
 )
 
 /*
-* YouTube client.
- */
-type Client struct {
-	VideoRepository string
-}
-
-/*
 * Get a video list from given id.
  */
-func (cl *Client) GetVideoListFromId(id string) (VideoList, error) {
+func GetVideoListFromId(id string) (VideoList, error) {
 	url := "https://www.youtube.com/watch?v=" + id
-	return cl.GetVideoListFromUrl(url)
+	return GetVideoListFromUrl(url)
 }
 
 /*
 * Get a video list from given url.
  */
-func (cl *Client) GetVideoListFromUrl(url string) (vl VideoList, err error) {
+func GetVideoListFromUrl(url string) (vl VideoList, err error) {
 	//Get webpage content from url
-	body, err := cl.GetHttpFromUrl(url)
+	body, err := GetHttpFromUrl(url)
 	if err != nil {
 		return
 	}
 	//Extract json data from webpage content
-	jsonData, err := cl.GetJsonFromHttp(body)
+	jsonData, err := GetJsonFromHttp(body)
 	if err != nil {
 		return
 	}
 	//Fetch video list according to json data
-	vl, err = cl.GetVideoListFromJson(jsonData)
+	vl, err = GetVideoListFromJson(jsonData)
 	if err != nil {
 		return
 	}
@@ -50,29 +43,29 @@ func (cl *Client) GetVideoListFromUrl(url string) (vl VideoList, err error) {
 /*
 * Initialize a GET request, and get the http code of the webpage.
  */
-func (cl *Client) GetHttpFromUrl(url string) ([]byte, error) {
+func GetHttpFromUrl(url string) (body []byte, err error) {
 	resp, err := http.Get(url)
 	if err != nil {
-		return nil, err
+		return
 	}
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return
 	}
-	return body, nil
+	return
 }
 
 /*
 * Get json data from http code.
  */
-func (*Client) GetJsonFromHttp(httpData []byte) (map[string]interface{}, error) {
+func GetJsonFromHttp(httpData []byte) (map[string]interface{}, error) {
 	//Find out if this page is age-restricted
 	if bytes.Index(httpData, []byte("og:restrictions:age")) != -1 {
 		return nil, errors.New("this page is age-restricted")
 	}
 	//Find begining of json data
-	var jsonBeg = "ytplayer.config = {"
+	jsonBeg := "ytplayer.config = {"
 	beg := bytes.Index(httpData, []byte(jsonBeg))
 	if beg == -1 { //pattern not found
 		return nil, PatternNotFoundError{_pattern: jsonBeg}
@@ -80,8 +73,8 @@ func (*Client) GetJsonFromHttp(httpData []byte) (map[string]interface{}, error) 
 	beg += len(jsonBeg) //len(jsonBeg) returns the number of bytes in jsonBeg
 
 	//Find offset of json data
-	var unmatchedBrackets = 1
-	var offset = 0
+	unmatchedBrackets := 1
+	offset := 0
 	for unmatchedBrackets > 0 {
 		nextRight := bytes.Index(httpData[beg+offset:], []byte("}"))
 		if nextRight == -1 {
@@ -104,7 +97,7 @@ func (*Client) GetJsonFromHttp(httpData []byte) (map[string]interface{}, error) 
 /*
 * Get video list from json data retrieved from http code.
  */
-func (*Client) GetVideoListFromJson(jsonData map[string]interface{}) (vl VideoList, err error) {
+func GetVideoListFromJson(jsonData map[string]interface{}) (vl VideoList, err error) {
 	args := jsonData["args"].(map[string]interface{})
 	vl.Title = args["title"].(string)
 	encodedStreamMap := args["url_encoded_fmt_stream_map"].(string)

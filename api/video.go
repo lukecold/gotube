@@ -47,19 +47,17 @@ func (video *Video) FindMissingFields() (missingFields []string) {
 * Download this video into the repository,
 * if repository is not generated, download to current folder.
  */
-func (video *Video) Download(cl Client) error {
+func (video *Video) Download(rep string) error {
 	//Get video from url
-	body, err := cl.GetHttpFromUrl(video.url)
+	body, err := GetHttpFromUrl(video.url)
 	if err != nil {
 		return err
 	}
-	var pathname string
-	if cl.VideoRepository != "" {
+	if rep != "" {
 		//Make a directory and give every user highest permission
-		os.MkdirAll(cl.VideoRepository, 0777)
-		pathname = cl.VideoRepository
-		if !HasSuffix(pathname, "/") {
-			pathname += "/"
+		os.MkdirAll(rep, 0777)
+		if !HasSuffix(rep, "/") {
+			rep += "/"
 		}
 	}
 
@@ -75,7 +73,7 @@ func (video *Video) Download(cl Client) error {
 			}
 			return r
 		}, filename)
-	filename = pathname + filename
+	filename = rep + filename
 	file, err := os.Create(filename)
 	if err != nil {
 		return err
@@ -100,12 +98,12 @@ func (vl *VideoList) Append(v Video) {
 * Filter the list first by the given key words,
 * then download the first video in the list
  */
-func (vl *VideoList) Download(cl Client, quality, extension string) (err error) {
+func (vl *VideoList) Download(rep string, quality, extension string) (err error) {
 	vl.Filter(quality, extension)
 
 	//No matter how many left, pick the first one
 	video := vl.Videos[0]
-	err = video.Download(cl)
+	err = video.Download(rep)
 	return err
 }
 

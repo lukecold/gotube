@@ -12,7 +12,9 @@ func main() {
 	isRetList := flag.Bool("l", false, "use this flag to retrieve video list")
 	url := flag.String("url", "", "video url")
 	id := flag.String("id", "", "video id")
-	rep := flag.String("-VideoRepository", "", "(optional) repository to store videos")
+	search := flag.String("-search", "", "search by key words")
+	flag.StringVar(search, "s", "", "search by key words")
+	rep := flag.String("-videorepository", "", "(optional) repository to store videos")
 	flag.StringVar(rep, "rep", "", "(optional) repository to store videos")
 	quality := flag.String("-quality", "", "(optional) video quality. e.g. medium")
 	flag.StringVar(quality, "q", "", "(optional) video quality. e.g. medium")
@@ -35,11 +37,22 @@ func main() {
 		fmt.Println("Please choose if you want to download or retrieve video list.")
 		invalidCommand = true
 	}
-	if *url == "" && *id == "" {
-		fmt.Println("Please specify either url and id.")
+	//Find out how many sources are specified
+	sourceNum := 0
+	if *url != "" {
+		sourceNum++
+	}
+	if *id != "" {
+		sourceNum++
+	}
+	if *search != "" {
+		sourceNum++
+	}
+	if sourceNum == 0 {
+		fmt.Println("Please specify one of url, id, and key word(s).")
 		invalidCommand = true
-	} else if *url != "" && *id != "" {
-		fmt.Println("Please don't specify both url and id.")
+	} else if sourceNum > 1 {
+		fmt.Println("Please don't specify more than one of url, id, and key word(s).")
 		invalidCommand = true
 	}
 	if invalidCommand {
@@ -48,22 +61,26 @@ func main() {
 		return
 	}
 
-	//Initialize a client
-	cl := Client{VideoRepository: *rep}
 	//Get the video list
 	var vl VideoList
 	var err error
 	if *url != "" {
-		vl, err = cl.GetVideoListFromUrl(*url)
+		vl, err = GetVideoListFromUrl(*url)
+	} else if *id != "" {
+		vl, err = GetVideoListFromId(*id)
 	} else {
-		vl, err = cl.GetVideoListFromId(*id)
+		ids, err := GetTopKVideoIds(*search, 1)
+		if err != nil {
+			log.Fatal(err)
+		}
+		vl, err = GetVideoListFromId(ids[0])
 	}
 	if err != nil {
 		log.Fatal(err)
 	}
 	//Choose either downloading or retrieving video list
 	if *isDownload {
-		err = vl.Download(cl, *quality, *extension)
+		err = vl.Download(*rep, *quality, *extension)
 		if err != nil {
 			log.Fatal(err)
 		}
