@@ -113,7 +113,7 @@ func Exec(vl VideoList, isDownload, isRetList bool, rep, quality, extension stri
 	defer func() {
 		<- end
 		wg.Done()
-	}
+	} ()
 
 	if isDownload {
 		fmt.Printf("Downloading %v...\n", vl.Title)
