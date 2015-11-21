@@ -56,13 +56,13 @@ import (
 
 func main() {
 	idList := [...]string{"shLTrG_noKo", "Ojv7tKpzkyM", "GahnMbhmt7g"}
-	cl := Client{VideoRepository: "Curry_highlights"}
+	rep := "Curry_highlights"
 	for _, id := range idList {
-		vl, err := cl.GetVideoListFromId(id)
+		vl, err := GetVideoListFromId(id)
 		if err != nil {
 			log.Fatal(err)
 		}
-		err = vl.Download(cl, "", "video/mp4")
+		err = vl.Download(rep, "", "video/mp4")
 		if err != nil {
 			log.Fatal(err)
 		}

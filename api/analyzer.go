@@ -4,57 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"io/ioutil"
-	"net/http"
 	"net/url"
 	. "strings"
 )
-
-/*
-* Get a video list from given id.
- */
-func GetVideoListFromId(id string) (VideoList, error) {
-	url := "https://www.youtube.com/watch?v=" + id
-	return GetVideoListFromUrl(url)
-}
-
-/*
-* Get a video list from given url.
- */
-func GetVideoListFromUrl(url string) (vl VideoList, err error) {
-	//Get webpage content from url
-	body, err := GetHttpFromUrl(url)
-	if err != nil {
-		return
-	}
-	//Extract json data from webpage content
-	jsonData, err := GetJsonFromHttp(body)
-	if err != nil {
-		return
-	}
-	//Fetch video list according to json data
-	vl, err = GetVideoListFromJson(jsonData)
-	if err != nil {
-		return
-	}
-	return
-}
-
-/*
-* Initialize a GET request, and get the http code of the webpage.
- */
-func GetHttpFromUrl(url string) (body []byte, err error) {
-	resp, err := http.Get(url)
-	if err != nil {
-		return
-	}
-	defer resp.Body.Close()
-	body, err = ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-	return
-}
 
 /*
 * Get json data from http code.
@@ -131,6 +83,37 @@ func GetVideoListFromJson(jsonData map[string]interface{}) (vl VideoList, err er
 			return
 		}
 		vl.Append(video)
+	}
+	return
+}
+
+/*
+* Parse the http data of the page get from url and retrieve the id list
+*/
+func GetVideoIdsFromSearch(searchUrl string) (idList []string, err error) {
+	//Get the http code of the page get from url
+	body, err := GetHttpFromUrl(searchUrl)
+	if err != nil {
+		return
+	}
+	//Retrive id list
+	idBeg := []byte("class=\"yt-lockup yt-lockup-tile yt-lockup-video vve-check clearfix yt-uix-tile\" data-context-item-id=\"")
+	beg := 0
+	for {
+		//Find the index of begin pattern
+		offset := bytes.Index(body[beg:], idBeg)
+		if offset < 0 {
+			return
+		}
+		beg += offset + len(idBeg)
+		//Find the index of closing parenthesis
+		offset = bytes.Index(body[beg:], []byte("\""))
+		if offset < 0 {
+			err = errors.New("unmatched parenthesis")
+			return
+		}
+		end := beg + offset
+		idList = append(idList, string(body[beg:end]))
 	}
 	return
 }

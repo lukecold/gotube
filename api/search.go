@@ -1,7 +1,6 @@
 package gotube
 
 import (
-	"bytes"
 	"errors"
 	"net/url"
 	"strconv"
@@ -24,7 +23,7 @@ func GetTopKVideoIds(keywords string, k int) ([]string, error) {
 			return idList, err
 		}
 		//Get list of video id from current page
-		idListOfPage, err := GetVideoIdsFromPage(searchUrl)
+		idListOfPage, err := GetVideoIdsFromSearch(searchUrl)
 		if err != nil {
 			return idList, err
 		}
@@ -71,37 +70,6 @@ func GetSearchUrl(keywords string, pageNum int) (searchUrl string, err error) {
 		//No action needed
 	case pageNum > 1:
 		searchUrl += "&page=" + strconv.Itoa(pageNum)
-	}
-	return
-}
-
-/*
-* Parse the http data of the page get from url and retrieve the id list
-*/
-func GetVideoIdsFromPage(searchUrl string) (idList []string, err error) {
-	//Get the http code of the page get from url
-	body, err := GetHttpFromUrl(searchUrl)
-	if err != nil {
-		return
-	}
-	//Retrive id list
-	idBeg := []byte("class=\"yt-lockup yt-lockup-tile yt-lockup-video vve-check clearfix yt-uix-tile\" data-context-item-id=\"")
-	beg := 0
-	for {
-		//Find the index of begin pattern
-		offset := bytes.Index(body[beg:], idBeg)
-		if offset < 0 {
-			return
-		}
-		beg += offset + len(idBeg)
-		//Find the index of closing parenthesis
-		offset = bytes.Index(body[beg:], []byte("\""))
-		if offset < 0 {
-			err = errors.New("unmatched parenthesis")
-			return
-		}
-		end := beg + offset
-		idList = append(idList, string(body[beg:end]))
 	}
 	return
 }
