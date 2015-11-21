@@ -3,6 +3,10 @@ Gotube is a YouTube downloader using go language.
 go language is a new light-weight language developed by Google, 
 it provides not only many powerful libraries, but also a simple multi-threading syntax.
 
+This tool is an easy way to download any non-age-restricted videos in YouTube. 
+You can also perform batch downloading by keywords via search function.
+Gotube will generate a number of go-routines (no more than the number of your CPU cores) to download multiple videos simultaneously. 
+
 ##Installation
 - Install go from [https://golang.org/](https://golang.org/)
 - Set up go environment as in [https://golang.org/doc/install](https://golang.org/doc/install)

@@ -5,6 +5,8 @@ import (
 	"fmt"
 	. "github.com/KeluDiao/gotube/api"
 	"log"
+	"runtime"
+	"sync"
 )
 
 func main() {
@@ -77,25 +79,42 @@ func main() {
 		if *isRetList {
 			fmt.Printf("The top %v results for key words \"%v\" are:\n\n", *k, *search)
 		}
+		//Waiting group is used to prevent main thread ending before child threads end
+		wg := new(sync.WaitGroup)
+		wg.Add(len(ids))
+		//Channel is used to control the maximum threads
+		end := make(chan bool, MaxParallelism())
 		for _, vid := range ids {
 			vl, err = GetVideoListFromId(vid)
 			if err != nil {
 				log.Fatal(err)
 			}
-			Exec(vl, *isDownload, *isRetList, *rep, *quality, *extension)
+			go Exec(vl, *isDownload, *isRetList, *rep, *quality, *extension, wg, end)
+			end <- true
 		}
+		wg.Wait()
 		return
 	}
 	if err != nil {
 		log.Fatal(err)
 	}
-	Exec(vl, *isDownload, *isRetList, *rep, *quality, *extension)
+	//dummy variables
+	wg := new(sync.WaitGroup)
+	wg.Add(1)
+	var end chan bool
+	Exec(vl, *isDownload, *isRetList, *rep, *quality, *extension, wg, end)
 }
 
 /*
 * Choose either downloading or retrieving video list
 */
-func Exec(vl VideoList, isDownload, isRetList bool, rep, quality, extension string) {
+func Exec(vl VideoList, isDownload, isRetList bool, rep, quality, extension string, wg *sync.WaitGroup, end chan bool) {
+	//Set up synchronization function
+	defer func() {
+		<- end
+		wg.Done()
+	}
+
 	if isDownload {
 		fmt.Printf("Downloading %v...\n", vl.Title)
 		err := vl.Download(rep, quality, extension)
@@ -110,4 +129,16 @@ func Exec(vl VideoList, isDownload, isRetList bool, rep, quality, extension stri
 		}
 		fmt.Println(vl)
 	}
+}
+
+/*
+* Find out the maximum go routines allowed
+*/
+func MaxParallelism() int {
+    maxProcs := runtime.GOMAXPROCS(0)
+    numCPU := runtime.NumCPU()
+    if maxProcs < numCPU {
+        return maxProcs
+    }
+    return numCPU
 }
