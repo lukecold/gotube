@@ -4,3 +4,6 @@ go:
 script:
   - go get github.com/KeluDiao/gotube 
   - go test -v
+branches:
+  only:
+    - master

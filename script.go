@@ -84,15 +84,22 @@ func main() {
 		wg.Add(len(ids))
 		//Channel is used to control the maximum threads
 		end := make(chan bool, MaxParallelism())
-		for _, vid := range ids {
+		for idx, vid := range ids {
 			vl, err = GetVideoListFromId(vid)
 			if err != nil {
 				log.Fatal(err)
 			}
-			go Exec(vl, *isDownload, *isRetList, *rep, *quality, *extension, wg, end)
-			end <- true
+			if *isDownload {
+				go Exec(vl, *isDownload, *isRetList, *rep, *quality, *extension, wg, end)
+				end <- true
+			} else {
+				fmt.Printf("%v. %v\n", idx+1, vl.Title)
+			}
 		}
-		wg.Wait()
+		if *isDownload {
+			wg.Wait()
+		}
+
 		return
 	}
 	if err != nil {
@@ -107,13 +114,13 @@ func main() {
 
 /*
 * Choose either downloading or retrieving video list
-*/
+ */
 func Exec(vl VideoList, isDownload, isRetList bool, rep, quality, extension string, wg *sync.WaitGroup, end chan bool) {
 	//Set up synchronization function
 	defer func() {
-		<- end
+		<-end
 		wg.Done()
-	} ()
+	}()
 
 	if isDownload {
 		fmt.Printf("Downloading %v...\n", vl.Title)
@@ -133,12 +140,12 @@ func Exec(vl VideoList, isDownload, isRetList bool, rep, quality, extension stri
 
 /*
 * Find out the maximum go routines allowed
-*/
+ */
 func MaxParallelism() int {
-    maxProcs := runtime.GOMAXPROCS(0)
-    numCPU := runtime.NumCPU()
-    if maxProcs < numCPU {
-        return maxProcs
-    }
-    return numCPU
+	maxProcs := runtime.GOMAXPROCS(0)
+	numCPU := runtime.NumCPU()
+	if maxProcs < numCPU {
+		return maxProcs
+	}
+	return numCPU
 }
