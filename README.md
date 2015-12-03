@@ -1,4 +1,4 @@
-# gotube ![build status](https://travis-ci.org/KeluDiao/gotube.svg?branch=master)
+# gotube ![build status](https://travis-ci.org/KeluDiao/gotube.svg?branch=master) [![GitHub license](http://dmlc.github.io/img/apache2.svg)](./LICENSE)
 Gotube is a YouTube downloader using golang.
 golang (go language) is a new light-weight language developed by Google, 
 it provides not only many powerful libraries, but also a simple multi-threading syntax.
@@ -88,3 +88,11 @@ func main() {
 You can also check the file "script.go" to see how to call other APIs.
 
 This program is still under-developing. More interesting functionalities will be added into it soon! 
+
+##Bug Reporting
+* For reporting bugs please use the [gotube/issues](https://github.com/KeluDiao/gotube/issues) page.
+* We are looking forward to pull requests from everybody through [gotube/pulls](https://github.com/KeluDiao/gotube/pulls).
+
+##License
+© Contributors, 2015. Licensed under an Apache-2.0 license.
+This project was initially developed by [Kelu Diao](mailto:diaokelu@gmail.com)
