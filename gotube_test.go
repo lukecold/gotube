@@ -38,7 +38,7 @@ func DownloadTesting(t *testing.T) {
 		t.Fatalf("Expected 1 videos after filtering, got %v", len(vl.Videos))
 	}
 	//Download video into ./videos
-	err = vl.Download(rep, "", "")
+	err = vl.Download(rep, "", "", "")
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
