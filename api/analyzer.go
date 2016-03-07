@@ -97,7 +97,7 @@ func GetVideoIdsFromSearch(searchUrl string) (idList []string, err error) {
 		return
 	}
 	//Retrive id list
-	idBeg := []byte("class=\"yt-lockup yt-lockup-tile yt-lockup-video vve-check clearfix yt-uix-tile\" data-context-item-id=\"")
+	idBeg := []byte("class=\"yt-lockup yt-lockup-tile yt-lockup-video vve-check clearfix\" data-context-item-id=\"")
 	beg := 0
 	for {
 		//Find the index of begin pattern

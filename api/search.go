@@ -2,7 +2,6 @@ package gotube
 
 import (
 	"errors"
-	"net/url"
 	"strconv"
 	. "strings"
 )
@@ -59,8 +58,7 @@ func GetSearchUrl(keywords string, pageNum int) (searchUrl string, err error) {
 			return r
 		}, keywords)
 	//Escape keyword to safely put into url
-	keywords = url.QueryEscape(keywords)
-	searchUrl = "https://www.youtube.com/results?search_query=" + keywords
+	searchUrl = "https://www.youtube.com/results?q=" + keywords
 	//Make sure page number is valid
 	switch {
 	case pageNum < 1:

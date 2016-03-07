@@ -19,6 +19,8 @@ func main() {
 	k := flag.Int("k", 1, "return top k results, only valid with key word searching")
 	rep := flag.String("-videorepository", "", "(optional) repository to store videos")
 	flag.StringVar(rep, "rep", "", "(optional) repository to store videos")
+	filename := flag.String("-filename", "", "(optional) filename of video - only valid when downloading one video")
+	flag.StringVar(filename, "f", "", "(optional) filename of video - only valid when downloading one video")
 	quality := flag.String("-quality", "", "(optional) video quality. e.g. medium")
 	flag.StringVar(quality, "q", "", "(optional) video quality. e.g. medium")
 	extension := flag.String("-extension", "", "(optional) video extension. e.g. video/mp4, video/flv, video/webm")
@@ -81,17 +83,18 @@ func main() {
 		}
 		//Waiting group is used to prevent main thread ending before child threads end
 		wg := new(sync.WaitGroup)
-		wg.Add(len(ids))
+		if *isDownload {
+			wg.Add(len(ids))
+		}
 		//Channel is used to control the maximum threads
-		end := make(chan bool, MaxParallelism())
+		//end := make(chan bool, MaxParallelism())
 		for idx, vid := range ids {
 			vl, err = GetVideoListFromId(vid)
 			if err != nil {
 				log.Fatal(err)
 			}
 			if *isDownload {
-				go Exec(vl, *isDownload, *isRetList, *rep, *quality, *extension, wg, end)
-				end <- true
+				go Exec(vl, *isDownload, *isRetList, *rep, *filename, *quality, *extension, wg)
 			} else {
 				fmt.Printf("%v. %v\n", idx+1, vl.Title)
 			}
@@ -108,23 +111,23 @@ func main() {
 	//dummy variables
 	wg := new(sync.WaitGroup)
 	wg.Add(1)
-	var end chan bool
-	Exec(vl, *isDownload, *isRetList, *rep, *quality, *extension, wg, end)
+	Exec(vl, *isDownload, *isRetList, *rep, *filename, *quality, *extension, wg)
+	wg.Wait()
+	return
 }
 
 /*
 * Choose either downloading or retrieving video list
  */
-func Exec(vl VideoList, isDownload, isRetList bool, rep, quality, extension string, wg *sync.WaitGroup, end chan bool) {
+func Exec(vl VideoList, isDownload, isRetList bool, rep, filename, quality, extension string, wg *sync.WaitGroup) {
 	//Set up synchronization function
 	defer func() {
-		<-end
 		wg.Done()
 	}()
 
 	if isDownload {
 		fmt.Printf("Downloading %v...\n", vl.Title)
-		err := vl.Download(rep, quality, extension)
+		err := vl.Download(rep, filename, quality, extension)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -136,6 +139,7 @@ func Exec(vl VideoList, isDownload, isRetList bool, rep, quality, extension stri
 		}
 		fmt.Println(vl)
 	}
+	return
 }
 
 /*

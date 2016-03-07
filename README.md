@@ -48,6 +48,10 @@ Specify a video repository using absolute path (If you are a Windows user, I hig
 ```
 gotube -d -id C0DPdy98e4c -q medium -ext video/mp4 -rep /Users/yourusername/Documents/videos
 ```
+Specify the video filename:
+```
+gotube -d -id C0DPdy98e4c -f test.mp4 -q medium -ext video/mp4 -rep ./videos
+```
 Try search by keywords and see what would return:
 ```
 gotube -l -s "curry highlights"

@@ -5,6 +5,7 @@ import (
 	"os"
 	"strconv"
 	. "strings"
+	"unicode/utf8"
 )
 
 /*
@@ -22,8 +23,8 @@ type Video struct {
 * that shared the same YouTube url.
  */
 type VideoList struct {
-	Title   string
-	Videos  []Video
+	Title  string
+	Videos []Video
 }
 
 /*
@@ -44,10 +45,11 @@ func (video *Video) FindMissingFields() (missingFields []string) {
 }
 
 /*
-* Download this video into the repository,
-* if repository is not generated, download to current folder.
+* Download this video into the repository, with specified name
+* if repository is not generated, download to current folder,
+* if name is not given, use video's name + extension
  */
-func (video *Video) Download(rep string) error {
+func (video *Video) Download(rep string, filename string) error {
 	//Get video from url
 	body, err := GetHttpFromUrl(video.url)
 	if err != nil {
@@ -61,18 +63,20 @@ func (video *Video) Download(rep string) error {
 		}
 	}
 
-	filename := video.Title + video.extension
-	//Make sure there is no invalid characters in filename
-	filename = Map(
-		func(r rune) rune {
-			switch r {
-			case '/', '\\':
-				r = '.'
-			case ':', '*', '?', '"', '<', '>', '|':
-				r = '-'
-			}
-			return r
-		}, filename)
+	if utf8.RuneCountInString(filename) <= 0 {
+		filename = video.Title + video.extension
+		//Make sure there is no invalid characters in filename
+		filename = Map(
+			func(r rune) rune {
+				switch r {
+				case '/', '\\':
+					r = '.'
+				case ':', '*', '?', '"', '<', '>', '|':
+					r = '-'
+				}
+				return r
+			}, filename)
+	}
 	filename = rep + filename
 	file, err := os.Create(filename)
 	if err != nil {
@@ -98,12 +102,11 @@ func (vl *VideoList) Append(v Video) {
 * Filter the list first by the given key words,
 * then download the first video in the list
  */
-func (vl *VideoList) Download(rep string, quality, extension string) (err error) {
+func (vl *VideoList) Download(rep, filename, quality, extension string) (err error) {
 	vl.Filter(quality, extension)
-
 	//No matter how many left, pick the first one
 	video := vl.Videos[0]
-	err = video.Download(rep)
+	err = video.Download(rep, filename)
 	return err
 }
 
