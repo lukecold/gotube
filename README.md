@@ -12,7 +12,7 @@ Gotube will generate a number of go-routines (no more than the number of your CP
 - Set up go environment as in [https://golang.org/doc/install](https://golang.org/doc/install)
   - (For Un*x users) 
   	- ```export GOPATH=$HOME/path/to/workspace/```
-  	- ```export PATH=$PATH:$GOPATH/bin```
+  	- ```export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin```
   - (For Windows users) 
   	- In environment variables add GOPATH=path/to/workspace/ 
   	- Append path/to/workspace/bin to PATH
