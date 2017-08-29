@@ -7,7 +7,7 @@ This tool is an easy way to download any non-age-restricted videos in YouTube.
 You can also perform **batch downloading** by keywords via **search** function.
 Gotube will generate a number of go-routines (no more than the number of your CPU cores) to download multiple videos **simultaneously**. 
 
-##Installation
+## Installation
 - Install go from [https://golang.org/](https://golang.org/)
 - Set up go environment as in [https://golang.org/doc/install](https://golang.org/doc/install)
   - (For Un*x users) 
@@ -23,7 +23,7 @@ Gotube will generate a number of go-routines (no more than the number of your CP
 - For library usage
   - You don't need to do anything
 
-##Command-line usage
+## Command-line usage
 You can check the video list from a url or video id:
 ```
 gotube -l -url https://www.youtube.com/watch?v=C0DPdy98e4c
@@ -65,7 +65,7 @@ Download all of them:
 gotube -d -s "curry highlights" -k 5 -rep /Users/yourusername/Documents/videos
 ```
 
-#Library usage
+# Library usage
 ```go
 package main
 
@@ -93,10 +93,10 @@ You can also check the file "script.go" to see how to call other APIs.
 
 This program is still under-developing. More interesting functionalities will be added into it soon! 
 
-##Bug Reporting
+## Bug Reporting
 * For reporting bugs please use the [gotube/issues](https://github.com/KeluDiao/gotube/issues) page.
 * We are looking forward to pull requests from everybody through [gotube/pulls](https://github.com/KeluDiao/gotube/pulls).
 
-##License
+## License
 © Contributors, 2015. Licensed under an Apache-2.0 license.
 This project was initially developed by [Kelu Diao](mailto:diaokelu@gmail.com)
