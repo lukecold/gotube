@@ -22,24 +22,11 @@ func GetJsonFromHttp(httpData []byte) (map[string]interface{}, error) {
 	if beg == -1 { //pattern not found
 		return nil, PatternNotFoundError{_pattern: jsonBeg}
 	}
-	beg += len(jsonBeg) //len(jsonBeg) returns the number of bytes in jsonBeg
-
-	//Find offset of json data
-	unmatchedBrackets := 1
-	offset := 0
-	for unmatchedBrackets > 0 {
-		nextRight := bytes.Index(httpData[beg+offset:], []byte("}"))
-		if nextRight == -1 {
-			return nil, errors.New("unmatched brackets")
-		}
-		unmatchedBrackets -= 1
-		unmatchedBrackets += bytes.Count(httpData[beg+offset:beg+offset+nextRight], []byte("{"))
-		offset += nextRight + 1
-	}
+	beg += len(jsonBeg) - 1 //len(jsonBeg) returns the number of bytes in jsonBeg
 
 	//Load json data
 	var f interface{}
-	err := json.Unmarshal(httpData[beg-1:beg+offset], &f)
+	err := json.NewDecoder(bytes.NewReader(httpData[beg:])).Decode(&f)
 	if err != nil {
 		return nil, err
 	}
